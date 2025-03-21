@@ -1,0 +1,44 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}"> <!-- Link to the new CSS file -->
+    <title>Login</title>
+</head>
+<body>
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <div class="login100-pic">
+                    <img src="https://colorlib.com/etc/lf/Login_v1/images/img-01.png" alt="Login Image"> <!-- Replace with your image -->
+                </div>
+                <form class="login100-form validate-form" method="POST">
+                    <span class="login100-form-title">
+                        Member Login
+                    </span>
+                    <div class="input-group">
+                        <input type="text" name="username" placeholder="Username" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="password" placeholder="Password" required>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <button type="submit" class="login100-form-btn">Login</button>
+                    </div>
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                        <ul>
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    {% endwith %}
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

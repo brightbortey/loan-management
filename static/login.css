@@ -1,0 +1,156 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif; /* Use a modern font */
+    background: linear-gradient(to right, #c850c0, #4158d0); /* Gradient background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Limiter */
+.limiter {
+    width: 100%;
+    padding: 15px;
+}
+
+/* Container */
+.container-login100 {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+/* Wrap Login */
+.wrap-login100 {
+    width: 960px;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 177px 130px 33px 95px;
+}
+
+/* Login Image */
+.login100-pic {
+    width: 316px;
+    will-change: transform;
+    transform: perspective(300px) rotateX(0deg) rotateY(0deg);
+}
+
+.login100-pic img {
+    max-width: 100%;
+}
+
+
+
+/* Form Title */
+.login100-form-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    color: #333333;
+    line-height: 1.2;
+    text-align: center;
+    width: 100%;
+    display: block;
+    padding-bottom: 54px;
+}
+
+.login100-form{
+    width: 290px;
+}
+
+
+/* Input Group */
+.input-group {
+    position: relative;
+    width: 100%;
+    z-index: 1;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #666666;
+    display: block;
+    width: 100%;
+    background: #e6e6e6;
+    height: 50px;
+    border-radius: 25px;
+    padding: 0 30px 0 68px;
+    border: none;
+    outline: none;
+}
+
+/* Button Styles */
+.container-login100-form-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+.login100-form-btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #fff;
+    text-transform: uppercase;
+    width: 100%;
+    height: 50px;
+    border-radius: 25px;
+    background: #322e63;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 25px;
+    transition: all 0.4s;
+    border: none;
+}
+
+.login100-form-btn:hover {
+    background: #333333; /* Darker shade on hover */
+}
+
+/* Text Center */
+.text-center {
+    text-align: center;
+}
+
+.txt1 {
+    color: #666666;
+}
+
+.txt2 {
+    color: #322e63; /* Link color */
+    text-decoration: none;
+}
+
+.txt2:hover {
+    text-decoration: underline; /* Underline on hover */
+}
+
+/* Flash Messages */
+ul {
+    list-style-type: none; /* Remove bullet points */
+    padding: 0;
+}
+
+ul li {
+    color: red; /* Color for error messages */
+    text-align: center; /* Center messages */
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}

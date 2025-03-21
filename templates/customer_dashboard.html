@@ -1,0 +1,100 @@
+<!-- templates/customer_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
+    <title>Customer Dashboard</title>
+    
+</head>
+<body>
+    <h2>Customer Dashboard</h2>
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+    <div class="tab-header" onclick="openTab(event, 'transactionHistory')">Transaction History</div>
+    <div class="tab-header" onclick="openTab(event, 'updateInfo')">Update Information</div>
+
+    <div id="transactionHistory" class="tab-content active">
+        <h3>Your Transactions</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Debtor ID</th>
+                    <th>Name of Debtor</th>
+                    <th>Contact</th>
+                    <th>Amount Owing</th>
+                    <th>Amount Paid</th>
+                    <th>Guarantor 1</th>
+                    <th>Guarantor 1 Contact</th>
+                    <th>Guarantor 2</th>
+                    <th>Guarantor 2 Contact</th>
+                    <th>Remarks</th>
+                </tr>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.debtor_id }}</td>
+                    <td>{{ transaction.name_of_debtor }}</td>
+                    <td>{{ transaction.contact }}</td>
+                    <td>{{ transaction.amount_owing }}</td>
+                    <td>{{ transaction.amount_paid }}</td>
+                    <td>{{ transaction.guarantor1_name }}</td>
+                    <td>{{ transaction.guarantor1_contact }}</td>
+                    <td>{{ transaction.guarantor2_name }}</td>
+                    <td>{{ transaction.guarantor2_contact }}</td>
+                    <td>{{ transaction.remarks }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+    <div id="updateInfo" class="tab-content">
+        <h3>Update Your Information</h3>
+        <div class="customer_card"> <!-- Card wrapper for the form -->
+            <div class="card-header">
+                <div class="header-container">
+                    <h4 class="card-title">Update Details</h4>
+                </div>
+            </div>
+            <form method="POST" action="{{ url_for('update_customer_info') }}">
+                <input type="text" name="username" placeholder="Username" value="{{ current_user.username }}" required>
+                <input type="password" name="password" placeholder="New Password (leave blank to keep current)">
+                <button type="submit">Update Information</button>
+            </form>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <script>
+        function openTab(evt, tabName) {
+            // Hide all tab contents
+            var tabContents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            // Remove active class from all tab headers
+            var tabHeaders = document.getElementsByClassName("tab-header");
+            for (var i = 0; i < tabHeaders.length; i++) {
+                tabHeaders[i].classList.remove("active");
+            }
+
+            // Show the current tab and add an "active" class to the clicked tab header
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>

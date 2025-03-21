@@ -1,0 +1,97 @@
+/* static/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h2 {
+    color: #333;
+}
+
+.tab-header {
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    display: inline-block;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.tab-header.active {
+    background-color: #ccc;
+}
+
+.tab-content {
+    border: 1px solid #ccc;
+    padding: 20px;
+    display: none; /* Hide all by default */
+}
+
+.tab-content.active {
+    display: block; /* Show active tab */
+}
+
+ /* Basic styles for tabs */
+.tab {
+    display: none;
+}
+.tab-header {
+    display: flex;
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+}
+.tab-header.active {
+    background-color: #ccc;
+}
+.tab-content {
+    border: 1px solid #ccc;
+    padding: 20px;
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
