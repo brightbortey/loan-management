@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='customer.css') }}">
     <title>Customer Dashboard</title>
-    
 </head>
 <body>
     <h2>Customer Dashboard</h2>
@@ -22,29 +21,29 @@
                 <tr>
                     <th>ID</th>
                     <th>Debtor ID</th>
-                    <th>Name of Debtor</th>
-                    <th>Contact</th>
-                    <th>Amount Owing</th>
+                    <th>Account Number</th>
+                    <th>Name</th>
+                    <th>Branch</th>
+                    <th>Arrears</th>
                     <th>Amount Paid</th>
-                    <th>Guarantor 1</th>
-                    <th>Guarantor 1 Contact</th>
-                    <th>Guarantor 2</th>
-                    <th>Guarantor 2 Contact</th>
-                    <th>Remarks</th>
+                    <th>Balance</th>
+                    <th>Address</th>
+                    <th>Telephone</th>
+                    <th>Comments</th>
                 </tr>
                 {% for transaction in transactions %}
                 <tr>
                     <td>{{ transaction.id }}</td>
                     <td>{{ transaction.debtor_id }}</td>
-                    <td>{{ transaction.name_of_debtor }}</td>
-                    <td>{{ transaction.contact }}</td>
-                    <td>{{ transaction.amount_owing }}</td>
+                    <td>{{ transaction.account_number }}</td>
+                    <td>{{ transaction.name }}</td>
+                    <td>{{ transaction.branch }}</td>
+                    <td>{{ transaction.arrears }}</td>
                     <td>{{ transaction.amount_paid }}</td>
-                    <td>{{ transaction.guarantor1_name }}</td>
-                    <td>{{ transaction.guarantor1_contact }}</td>
-                    <td>{{ transaction.guarantor2_name }}</td>
-                    <td>{{ transaction.guarantor2_contact }}</td>
-                    <td>{{ transaction.remarks }}</td>
+                    <td>{{ transaction.arrears - transaction.amount_paid }}</td> <!-- Calculate balance -->
+                    <td>{{ transaction.address }}</td>
+                    <td>{{ transaction.telephone }}</td>
+                    <td>{{ transaction.comments }}</td>
                 </tr>
                 {% endfor %}
             </table>

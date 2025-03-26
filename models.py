@@ -13,12 +13,14 @@ class User(db.Model, UserMixin):
 class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     debtor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name_of_debtor = db.Column(db.String(150), nullable=False)
-    contact = db.Column(db.String(150), nullable=False)
-    amount_owing = db.Column(db.Float, nullable=False)
+    
+    # New fields added
+    account_number = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(150), nullable=False)
+    branch = db.Column(db.String(150), nullable=False)
+    arrears = db.Column(db.Float, nullable=False)
     amount_paid = db.Column(db.Float, nullable=False)
-    guarantor1_name = db.Column(db.String(150), nullable=False)
-    guarantor1_contact = db.Column(db.String(150), nullable=False)
-    guarantor2_name = db.Column(db.String(150), nullable=False)
-    guarantor2_contact = db.Column(db.String(150), nullable=False)
-    remarks = db.Column(db.Text, nullable=True)
+    balance = db.Column(db.Float, nullable=False)
+    address = db.Column(db.String(250), nullable=True)
+    telephone = db.Column(db.String(50), nullable=True)
+    comments = db.Column(db.Text, nullable=True)
