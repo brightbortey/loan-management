@@ -50,38 +50,38 @@ def update_payment(transaction_id):
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/add_transaction', methods=['POST'])
-@login_required
 def add_transaction():
-    if current_user.role != 'admin':
-        return redirect(url_for('customer_dashboard'))
-    
-    debtor_id = request.form['debtor_id']
-    name_of_debtor = request.form['name_of_debtor']
-    contact = request.form['contact']
-    amount_owing = request.form['amount_owing']
-    amount_paid = request.form['amount_paid']
-    guarantor1_name = request.form['guarantor1_name']
-    guarantor1_contact = request.form['guarantor1_contact']
-    guarantor2_name = request.form['guarantor2_name']
-    guarantor2_contact = request.form['guarantor2_contact']
-    remarks = request.form['remarks']
+    debtor_id = request.form.get('debtor_id')
+    account_number = request.form.get('account_number')
+    name = request.form.get('name')
+    branch = request.form.get('branch')
+    arrears = request.form.get('arrears')
+    amount_paid = request.form.get('amount_paid')
+    address = request.form.get('address')
+    telephone = request.form.get('telephone')
+    comments = request.form.get('comments')
 
-    new_transaction = Transaction(
+    # Ensure all required fields are present
+    if not debtor_id or not account_number or not name or not branch or not arrears or not amount_paid:
+        return "Missing required fields", 400
+
+    # Create and add the transaction to the database
+    transaction = Transaction(
         debtor_id=debtor_id,
-        name_of_debtor=name_of_debtor,
-        contact=contact,
-        amount_owing=amount_owing,
-        amount_paid=amount_paid,
-        guarantor1_name=guarantor1_name,
-        guarantor1_contact=guarantor1_contact,
-        guarantor2_name=guarantor2_name,
-        guarantor2_contact=guarantor2_contact,
-        remarks=remarks
+        account_number=account_number,
+        name=name,
+        branch=branch,
+        arrears=float(arrears),
+        amount_paid=float(amount_paid),
+        balance=float(arrears) - float(amount_paid),  # Calculate balance
+        address=address,
+        telephone=telephone,
+        comments=comments
     )
-    
-    db.session.add(new_transaction)
+
+    db.session.add(transaction)
     db.session.commit()
-    flash('Transaction added successfully!', 'success')
+
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/add_customer', methods=['POST'])
@@ -99,38 +99,41 @@ def add_customer():
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/update_transaction', methods=['POST'])
-@login_required
 def update_transaction():
-    transaction_id = request.form['transaction_id']
-    name_of_debtor = request.form['name_of_debtor']
-    contact = request.form['contact']
-    amount_owing = request.form['amount_owing']
-    amount_paid = request.form['amount_paid']
-    guarantor1_name = request.form['guarantor1_name']
-    guarantor1_contact = request.form['guarantor1_contact']
-    guarantor2_name = request.form['guarantor2_name']
-    guarantor2_contact = request.form['guarantor2_contact']
-    remarks = request.form['remarks']
+    transaction_id = request.form.get('transaction_id')
+    debtor_id = request.form.get('debtor_id')
+    account_number = request.form.get('account_number')
+    name = request.form.get('name')
+    branch = request.form.get('branch')
+    arrears = request.form.get('arrears')
+    amount_paid = request.form.get('amount_paid')
+    address = request.form.get('address')
+    telephone = request.form.get('telephone')
+    comments = request.form.get('comments')
 
-    # Fetch the transaction from the database
+    # Ensure all required fields are present
+    if not transaction_id or not debtor_id or not account_number or not name or not branch or not arrears or not amount_paid:
+        return "Missing required fields", 400
+
+    # Find the transaction in the database
     transaction = Transaction.query.get(transaction_id)
-    if transaction:
-        # Update the transaction details
-        transaction.name_of_debtor = name_of_debtor
-        transaction.contact = contact
-        transaction.amount_owing = amount_owing
-        transaction.amount_paid = amount_paid
-        transaction.guarantor1_name = guarantor1_name
-        transaction.guarantor1_contact = guarantor1_contact
-        transaction.guarantor2_name = guarantor2_name
-        transaction.guarantor2_contact = guarantor2_contact
-        transaction.remarks = remarks
+    if not transaction:
+        return "Transaction not found", 404
 
-        # Commit the changes to the database
-        db.session.commit()
-        flash('Transaction updated successfully!', 'success')
-    else:
-        flash('Transaction not found!', 'error')
+    # Update the transaction fields
+    transaction.debtor_id = debtor_id
+    transaction.account_number = account_number
+    transaction.name = name
+    transaction.branch = branch
+    transaction.arrears = float(arrears)
+    transaction.amount_paid = float(amount_paid)
+    transaction.balance = transaction.arrears - transaction.amount_paid  # Recalculate balance
+    transaction.address = address
+    transaction.telephone = telephone
+    transaction.comments = comments
+
+    # Commit the changes to the database
+    db.session.commit()
 
     return redirect(url_for('admin_dashboard'))
 

@@ -19,28 +19,28 @@ with app.app_context():
     # Create sample transactions for the customers
     transaction1 = Transaction(
         debtor_id=customer1.id,
-        account_number='ACC123456',
-        name='John Doe',
-        branch='Main Branch',
-        arrears=1000.0,
-        amount_paid=500.0,
-        balance=1000.0 - 500.0,  # Calculate balance
-        address='123 Elm St, Springfield',
-        telephone='123-456-7890',
-        comments='First installment paid.'
+        account_number=25809,
+        name='Insaan Ghana Limited',
+        branch='Dansoman',
+        arrears=637702,
+        amount_paid=0,
+        balance=437702 - 0,  # Calculate balance
+        address='P.O.Box DS 724,Accra-Dansoman',
+        telephone='0244853803',
+        comments='The debtor has informed us that he anticipates receiving funds from a government contract, which will enable him settle his debt by the end of April. We have requested a signed agreement to formalize a new payment plan.'
     )
 
     transaction2 = Transaction(
         debtor_id=customer2.id,
-        account_number='ACC654321',
-        name='Alice Smith',
-        branch='West Branch',
-        arrears=2000.0,
-        amount_paid=1000.0,
-        balance=2000.0 - 1000.0,  # Calculate balance
-        address='456 Oak St, Springfield',
-        telephone='234-567-8901',
-        comments='Second installment due next month.'
+        account_number=230039,
+        name='A&R Hatoum Limited',
+        branch='Accra',
+        arrears=100053,
+        amount_paid=100053,
+        balance=100053 - 0,  # Calculate balance
+        address='P.O.Box GP 13310, Accra',
+        telephone='0302766756, 0244646040',
+        comments='The debtor has committed to settling his debt upon receipt of payment from the government contract he secured. To formalize this arrangement, we have requested that he executes a repayment agreement.'
     )
 
     db.session.add(transaction1)
