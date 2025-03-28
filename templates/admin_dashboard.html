@@ -14,44 +14,58 @@
     <div class="tab-header" onclick="openTab(event, 'transactions')">Transactions</div>
     <div class="tab-header" onclick="openTab(event, 'addTransaction')">Add Transaction</div>
     <div class="tab-header" onclick="openTab(event, 'addCustomer')">Add Customer</div>
+    <div class="tab-header" onclick="openTab(event, 'responses')">Responses</div> <!-- New Tab Header -->
+
+    
+
 
     <div id="transactions" class="tab-content active">
         <h3>Transaction List</h3>
+
+        <div>
+            <input type="text" id="searchInput" placeholder="Search Transactions" onkeyup="searchTransactions()">
+            <button onclick="sortTransactions()">Sort by Debtor ID</button>
+        </div>
+
         <div class="table-container">
             <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Debtor ID</th>
-                    <th>Account Number</th>
-                    <th>Name</th>
-                    <th>Branch</th>
-                    <th>Arrears</th>
-                    <th>Amount Paid</th>
-                    <th>Balance</th>
-                    <th>Address</th>
-                    <th>Telephone</th>
-                    <th>Comments</th>
-                    <th>Actions</th>
-                </tr>
-                {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.id }}</td>
-                    <td>{{ transaction.debtor_id }}</td>
-                    <td>{{ transaction.account_number }}</td>
-                    <td>{{ transaction.name }}</td>
-                    <td>{{ transaction.branch }}</td>
-                    <td>{{ transaction.arrears }}</td>
-                    <td>{{ transaction.amount_paid }}</td>
-                    <td>{{ transaction.arrears - transaction.amount_paid }}</td> <!-- Calculate balance -->
-                    <td>{{ transaction.address }}</td>
-                    <td>{{ transaction.telephone }}</td>
-                    <td>{{ transaction.comments }}</td>
-                    <td>
-                        <button class="edit_button"onclick="openEditModal({{ transaction.id }}, '{{ transaction.account_number }}', '{{ transaction.name }}', '{{ transaction.branch }}', {{ transaction.arrears }}, {{ transaction.amount_paid }}, '{{ transaction.address }}', '{{ transaction.telephone }}', '{{ transaction.comments }}')">Edit</button>
-                        <button class="delete_button" onclick="openDeleteModal({{ transaction.id }})">x</button>
-                    </td>
-                </tr>
-                {% endfor %}
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Debtor ID</th>
+                        <th>Account Number</th>
+                        <th>Name</th>
+                        <th>Branch</th>
+                        <th>Arrears</th>
+                        <th>Amount Paid</th>
+                        <th>Balance</th>
+                        <th>Address</th>
+                        <th>Telephone</th>
+                        <th>Comments</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionTableBody">
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.debtor_id }}</td>
+                        <td>{{ transaction.account_number }}</td>
+                        <td>{{ transaction.name }}</td>
+                        <td>{{ transaction.branch }}</td>
+                        <td>{{ transaction.arrears }}</td>
+                        <td>{{ transaction.amount_paid }}</td>
+                        <td>{{ transaction.arrears - transaction.amount_paid }}</td>
+                        <td>{{ transaction.address }}</td>
+                        <td>{{ transaction.telephone }}</td>
+                        <td>{{ transaction.comments }}</td>
+                        <td>
+                            <button class="edit_button" onclick="openEditModal({{ transaction.id }})">Edit</button>
+                            <button class="delete_button" onclick="openDeleteModal({{ transaction.id }})">x</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
@@ -129,58 +143,90 @@
         </div>
     </div>
 
-<!-- Edit Transaction Modal -->
-<div id="editTransactionModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeEditModal()">&times;</span>
-        <h3>Edit Transaction</h3>
-        <form id="editTransactionForm" method="POST" action="{{ url_for('update_transaction') }}">
-            <input type="hidden" name="transaction_id" id="transaction_id">
-            <div class="form-group">
-                <label for="edit_debtor_id">Debtor ID</label>
-                <select name="debtor_id" id="edit_debtor_id" class="form-control" required>
-                    <option value="">Select Debtor</option>
-                    {% for customer in customers %}
-                        <option value="{{ customer.id }}">{{ customer.username }}</option>
+    <div id="responses" class="tab-content"> <!-- New Tab Content for Responses -->
+        <h3>Responses to Comments</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Account Number</th>
+                    <th>Name</th>
+                    <th>Comments</th>
+                    <th>Response</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+                {% for transaction in transactions %}
+                    {% for response in transaction.responses %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.account_number }}</td>
+                        <td>{{ transaction.name }}</td>
+                        <td>{{ transaction.comments }}</td>
+                        <td>{{ response.response_text }}</td>
+                        <td>{{ response.date }}</td>
+                        <td>
+                            <button onclick="deleteResponse({{ transaction.id }}, '{{ response.response_text|escape }}')">Delete</button>
+                        </td>
+                    </tr>
                     {% endfor %}
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="edit_account_number">Account Number</label>
-                <input type="text" name="account_number" id="edit_account_number" placeholder="Account Number" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_name">Name</label>
-                <input type="text" name="name" id="edit_name" placeholder="Name" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_branch">Branch</label>
-                <input type="text" name="branch" id="edit_branch" placeholder="Branch" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_arrears">Arrears</label>
-                <input type="number" name="arrears" id="edit_arrears" placeholder="Arrears" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_amount_paid">Amount Paid</label>
-                <input type="number" name="amount_paid" id="edit_amount_paid" placeholder="Amount Paid" required>
-            </div>
-            <div class="form-group">
-                <label for="edit_address">Address</label>
-                <input type="text" name="address" id="edit_address" placeholder="Address">
-            </div>
-            <div class="form-group">
-                <label for="edit_telephone">Telephone</label>
-                <input type="text" name="telephone" id="edit_telephone" placeholder="Telephone">
-            </div>
-            <div class="form-group">
-                <label for="edit_comments">Comments</label>
-                <textarea name="comments" id="edit_comments" placeholder="Comments"></textarea>
-            </div>
-            <button type="submit">Update Transaction</button>
-        </form>
+                {% endfor %}
+            </table>
+        </div>
     </div>
-</div>
+
+    <!-- Edit Transaction Modal -->
+    <div id="editTransactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h3>Edit Transaction</h3>
+            <form id="editTransactionForm" method="POST" action="{{ url_for('update_transaction') }}">
+                <input type="hidden" name="transaction_id" id="transaction_id">
+                <div class="form-group">
+                    <label for="edit_debtor_id">Debtor ID</label>
+                    <select name="debtor_id" id="edit_debtor_id" class="form-control" required>
+                        <option value="">Select Debtor</option>
+                        {% for customer in customers %}
+                            <option value="{{ customer.id }}">{{ customer.username }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit_account_number">Account Number</label>
+                    <input type="text" name="account_number" id="edit_account_number" placeholder="Account Number" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_name">Name</label>
+                    <input type="text" name="name" id="edit_name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_branch">Branch</label>
+                    <input type="text" name="branch" id="edit_branch" placeholder="Branch" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_arrears">Arrears</label>
+                    <input type="number" name="arrears" id="edit_arrears" placeholder="Arrears" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_amount_paid">Amount Paid</label>
+                    <input type="number" name="amount_paid" id="edit_amount_paid" placeholder="Amount Paid" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_address">Address</label>
+                    <input type="text" name="address" id="edit_address" placeholder="Address">
+                </div>
+                <div class="form-group">
+                    <label for="edit_telephone">Telephone</label>
+                    <input type="text" name="telephone" id="edit_telephone" placeholder="Telephone">
+                </div>
+                <div class="form-group">
+                    <label for="edit_comments">Comments</label>
+                    <textarea name="comments" id="edit_comments" placeholder="Comments"></textarea>
+                </div>
+                <button type="submit">Update Transaction</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Delete Confirmation Modal -->
     <div id="deleteTransactionModal" class="modal">
@@ -200,7 +246,7 @@
                 {% endfor %}
             </ul>
         {% endif %}
-        {% endwith %}
+    {% endwith %}
 
     <script>
         function openTab(evt, tabName) {
@@ -221,7 +267,7 @@
             evt.currentTarget.classList.add("active");
         }
 
-        function openEditModal(id, account_number, name, branch, arrears, amount_paid, address, telephone, comments) {
+        function openEditModal(id, account_number, name, branch, arrears, amount_paid, address, telephone, comments, debtor_id) {
             document.getElementById("transaction_id").value = id;
             document.getElementById("edit_account_number").value = account_number;
             document.getElementById("edit_name").value = name;
@@ -231,6 +277,9 @@
             document.getElementById("edit_address").value = address;
             document.getElementById("edit_telephone").value = telephone;
             document.getElementById("edit_comments").value = comments;
+
+            // Set the selected debtor ID
+            document.getElementById("edit_debtor_id").value = debtor_id;
 
             document.getElementById("editTransactionModal").style.display = "block";
         }
@@ -247,6 +296,7 @@
         function closeDeleteModal() {
             document.getElementById("deleteTransactionModal").style.display = "none";
         }
+
 
         // Handle Delete Confirmation
         document.getElementById("confirmDeleteButton").onclick = function() {
@@ -279,6 +329,82 @@
                 closeDeleteModal();
             }
         }
+        
     </script>
+    <script>
+        function deleteResponse(transactionId, responseText) {
+            if (confirm("Are you sure you want to delete this response?")) {
+                fetch('/delete_response', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        transaction_id: transactionId,  // This corresponds to transaction.id
+                        response_text: responseText     // This corresponds to response.response_text
+                    })
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Response deleted successfully.');
+                        location.reload(); // Reload the page to see the changes
+                    } else {
+                        alert('Error deleting response: ' + response.statusText);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting response.');
+                });
+            }
+        }
+    </script>
+
+    <script>
+        async function searchTransactions() {
+            const query = document.getElementById('searchInput').value;
+            const response = await fetch(`/api/transactions?query=${query}`);
+            const results = await response.json();
+            displayResults(results);
+        }
+
+        function displayResults(transactions) {
+            const tableBody = document.getElementById('transactionTableBody'); // Get the tbody element
+            tableBody.innerHTML = ''; // Clear previous results
+
+            // Rebuild the table rows with new results
+            transactions.forEach(transaction => {
+                const row = `
+                    <tr>
+                        <td>${transaction.id}</td>
+                        <td>${transaction.debtor_id}</td>
+                        <td>${transaction.account_number}</td>
+                        <td>${transaction.name}</td>
+                        <td>${transaction.branch}</td>
+                        <td>${transaction.arrears}</td>
+                        <td>${transaction.amount_paid}</td>
+                        <td>${transaction.arrears - transaction.amount_paid}</td>
+                        <td>${transaction.address}</td>
+                        <td>${transaction.telephone}</td>
+                        <td>${transaction.comments}</td>
+                        <td>
+                            <button class="edit_button" onclick="openEditModal(${transaction.id})">Edit</button>
+                            <button class="delete_button" onclick="openDeleteModal(${transaction.id})">x</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row; // Append the new row to the table body
+            });
+        }
+
+        async function sortTransactions() {
+            const response = await fetch(`/api/transactions?sortBy=debtorId`);
+            const sortedResults = await response.json();
+            displayResults(sortedResults);
+        }
+    </script>
+
+    
+
 </body>
 </html>

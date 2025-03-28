@@ -1,6 +1,7 @@
 # models.py
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from datetime import datetime  # Import datetime
 
 db = SQLAlchemy()
 
@@ -24,3 +25,27 @@ class Transaction(db.Model):
     address = db.Column(db.String(250), nullable=True)
     telephone = db.Column(db.String(50), nullable=True)
     comments = db.Column(db.Text, nullable=True)
+    responses = db.relationship('Response', backref='transaction', lazy=True)  # Relationship to responses
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'debtor_id': self.debtor_id,
+            'account_number': self.account_number,
+            'name': self.name,
+            'branch': self.branch,
+            'arrears': self.arrears,
+            'amount_paid': self.amount_paid,
+            'address': self.address,
+            'telephone': self.telephone,
+            'comments': self.comments,
+        }
+
+
+# Define your Response model
+class Response(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    transaction_id = db.Column(db.Integer, db.ForeignKey('transaction.id'), nullable=False)
+    response_text = db.Column(db.Text, nullable=False)
+    date = db.Column(db.DateTime, default=datetime.utcnow)  # Automatically set the date to now

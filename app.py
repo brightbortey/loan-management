@@ -1,8 +1,8 @@
 # app.py
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, User, Transaction
+from models import db, User, Transaction, Response 
 from datetime import datetime
 
 app = Flask(__name__)
@@ -35,9 +35,11 @@ def login():
 def admin_dashboard():
     if current_user.role != 'admin':
         return redirect(url_for('customer_dashboard'))
-    transactions = Transaction.query.all()
-    customers = User.query.filter_by(role='customer').all()
-    return render_template('admin_dashboard.html', transactions=transactions, customers=customers)
+    transactions = Transaction.query.all()    
+    responses = Response.query.all()  # Fetch all responses
+    customers = User.query.filter_by(role='customer').all()  # Adjust this based on your ORM setup
+
+    return render_template('admin_dashboard.html', transactions=transactions, customers=customers, responses=responses)
 
 @app.route('/update_payment/<int:transaction_id>', methods=['POST'])
 @login_required
@@ -163,7 +165,9 @@ def delete_transaction():
 @app.route('/customer_dashboard')
 @login_required
 def customer_dashboard():
+    # Fetch comments for the current user (debtor)
     transactions = Transaction.query.filter_by(debtor_id=current_user.id).all()
+    
     return render_template('customer_dashboard.html', transactions=transactions)
 
 @app.route('/update_customer_info', methods=['POST'])
@@ -182,6 +186,82 @@ def update_customer_info():
     db.session.commit()
     flash('Your information has been updated successfully!', 'success')
     return redirect(url_for('customer_dashboard'))
+
+@app.route('/respond_to_comment/<int:transaction_id>', methods=['POST'])
+def respond_to_comment(transaction_id):
+    response_text = request.form.get('response')
+    if response_text:
+        new_response = Response(transaction_id=transaction_id, response_text=response_text)
+        db.session.add(new_response)
+        db.session.commit()
+        flash('Your response has been submitted successfully!', 'success')
+    else:
+        flash('Response cannot be empty.', 'error')
+    return redirect(url_for('customer_dashboard'))
+
+
+@app.route('/delete_response', methods=['DELETE'])
+def delete_response():
+    try:
+        data = request.get_json()
+        
+        # Check if required fields are present
+        if 'transaction_id' not in data or 'response_text' not in data:
+            return {'error': 'Transaction ID and Response Text are required'}, 400
+
+        transaction_id = data['transaction_id']  # This should match the transaction.id
+        response_text = data['response_text']     # This should match the response.response_text
+
+        # Query to find the response based on transaction_id and response_text
+        response = Response.query.filter_by(transaction_id=transaction_id, response_text=response_text).first()
+
+        if response:
+            db.session.delete(response)
+            db.session.commit()
+            return {'message': 'Response deleted successfully'}, 200
+        else:
+            return {'error': 'Response not found'}, 404
+    except Exception as e:
+        return {'error': str(e)}, 500
+    
+
+@app.route('/api/transactions', methods=['GET'])
+def get_transactions():
+    query = request.args.get('query', '')
+    sort_by = request.args.get('sortBy', 'id')  # Default sort by ID
+
+    # Fetch transactions based on search query
+    transactions = Transaction.query
+
+    if query:
+        transactions = transactions.filter(Transaction.name.contains(query) | Transaction.debtor_id.contains(query))
+
+    # Sort transactions
+    if sort_by == 'debtorId':
+        transactions = transactions.order_by(Transaction.debtor_id)
+
+    transactions = transactions.all()
+    return jsonify([transaction.to_dict() for transaction in transactions])  # Return as JSON
+
+@app.route('/api/transactions/filter', methods=['POST'])
+def filter_transactions():
+    filters = request.json
+    debtor_id = filters.get('debtorId')
+    start_date = filters.get('startDate')
+    end_date = filters.get('endDate')
+
+    transactions = Transaction.query
+
+    if debtor_id:
+        transactions = transactions.filter(Transaction.debtor_id == debtor_id)
+    if start_date:
+        transactions = transactions.filter(Transaction.date >= start_date)
+    if end_date:
+        transactions = transactions.filter(Transaction.date <= end_date)
+
+    transactions = transactions.all()
+    return jsonify([transaction.to_dict() for transaction in transactions])  # Return filtered transactions as JSON
+
 
 @app.route('/logout')
 @login_required

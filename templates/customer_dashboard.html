@@ -13,6 +13,7 @@
 
     <div class="tab-header" onclick="openTab(event, 'transactionHistory')">Transaction History</div>
     <div class="tab-header" onclick="openTab(event, 'updateInfo')">Update Information</div>
+    <div class="tab-header" onclick="openTab(event, 'respondToComments')">Respond to Comments</div> <!-- New Tab Header -->
 
     <div id="transactionHistory" class="tab-content active">
         <h3>Your Transactions</h3>
@@ -63,6 +64,41 @@
                 <input type="password" name="password" placeholder="New Password (leave blank to keep current)">
                 <button type="submit">Update Information</button>
             </form>
+        </div>
+    </div>
+
+    <div id="respondToComments" class="tab-content"> <!-- New Tab Content -->
+        <h3>Respond to Comments</h3>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Account Number</th>
+                    <th>Name</th>
+                    <th>Comments</th>
+                    <th>Your Response</th>
+                    <th>Date</th>
+                </tr>
+                {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.id }}</td>
+                        <td>{{ transaction.account_number }}</td>
+                        <td>{{ transaction.name }}</td>
+                        <td>{{ transaction.comments }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('respond_to_comment', transaction_id=transaction.id) }}">
+                                <input type="text" name="response" placeholder="Your response" required>
+                                <button type="submit">Respond</button>
+                            </form>
+                        </td>
+                        <td>
+                            {% for response in transaction.responses %}
+                                {{ response.date }} <!-- Display the date of the response -->
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 
